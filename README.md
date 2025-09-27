@@ -22,7 +22,7 @@ No need to manually write boilerplate HTML and CSS — just describe your UI in 
 ## 📦 Installation
 
 ```bash
-pip install stencil
+pip install stencil-ui
 ```
 
 *(requires Python 3.8+)*

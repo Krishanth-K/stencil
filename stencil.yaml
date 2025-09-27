@@ -5,5 +5,8 @@ app:
       label: Whaaaat
       callback:  do_shiit()
   - button:
+      label: Whaaaat
+      callback:  do_shiit()
+  - button:
       label: theeeee
       callback:  do_shsfsf()
