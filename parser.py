@@ -2,7 +2,9 @@ from pprint import pprint
 import yaml
 
 
-def get_title(title: str):
+def get_head(title: str):
+    css = get_css()
+
     return f"""
         <!doctype html>
         <html lang="">
@@ -10,9 +12,9 @@ def get_title(title: str):
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <title>{title}</title>
+            <style>{css}</style>
             <link href="css/style.css" rel="stylesheet" />
           </head>
-          <body>
         """
 
 def get_button(label : str, callback : str):
@@ -38,6 +40,73 @@ def get_stubs(callbacks : list):
 
     return cont
 
+def get_css():
+    return """
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Body styling */
+body {
+    background-color: #f4f4f9;
+    color: #333;
+    padding: 20px;
+}
+
+/* Title */
+h1 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Paragraph text */
+p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Buttons container (if using a div) */
+#button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px; /* spacing between buttons */
+    margin-bottom: 20px;
+}
+
+/* Buttons styling */
+button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
+
+/* Optional: responsive */
+@media (max-width: 600px) {
+    button {
+        width: 80%;
+        padding: 12px;
+        font-size: 1.1rem;
+    }
+}
+"""
 
 
 def write_to_file(content : str):
@@ -47,23 +116,20 @@ def write_to_file(content : str):
 
 
 
-
 with open("sten.yaml", 'r') as f:
     data = yaml.safe_load(f)
 
 
-
-
 data : list[dict] = data.get("app")
 
-title = ""
+head = ""
 body = ""
 callbacks = []
 
 for element in data:
     for attr, value in element.items():
         if attr == "title":
-            body += get_title(value)
+            body += get_head(value)
 
         if attr == "button":
             but : str = get_button(value["label"], value["callback"])
@@ -81,13 +147,13 @@ close_header = """
             </html>
         """
 
-if title == "":
+if head == "":
     print("Error: no title")
 
 
 stubs = get_stubs(callbacks)
 
-content = title + body + close_header + stubs
+content = head + "<body>" + body + close_header + stubs
 
 
 write_to_file(content)

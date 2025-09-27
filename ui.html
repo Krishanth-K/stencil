@@ -1,18 +1,80 @@
-<!doctype html>
-<html lang="">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Hello</title>
-    <link href="css/style.css" rel="stylesheet" />
-  </head>
-  <body>
-    <p>explain</p>
-    <button onclick="do_shiit()">Whaaaat</button
-    ><button onclick="do_stuff()">Testttt</button>
-  </body>
-</html>
-<script>
-  function do_shiit(){                    // TODO: implement this                }                function do_stuff(){                    // TODO: implement this                }
-</script>
+<body>
+        <!doctype html>
+        <html lang="">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Hello</title>
+            <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
 
+/* Body styling */
+body {
+    background-color: #f4f4f9;
+    color: #333;
+    padding: 20px;
+}
+
+/* Title */
+h1 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Paragraph text */
+p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Buttons container (if using a div) */
+#button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px; /* spacing between buttons */
+    margin-bottom: 20px;
+}
+
+/* Buttons styling */
+button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
+
+/* Optional: responsive */
+@media (max-width: 600px) {
+    button {
+        width: 80%;
+        padding: 12px;
+        font-size: 1.1rem;
+    }
+}
+</style>
+            <link href="css/style.css" rel="stylesheet" />
+          </head>
+        <p>explain</p><button onclick="do_shiit()">Whaaaat</button><button onclick="do_stuff()">Testttt</button>
+            </body>
+            </html>
+        <script> 
+function do_shiit(){                    // TODO: implement this                }                function do_stuff(){                    // TODO: implement this                }                </script>
