@@ -1,0 +1,9 @@
+[project]
+name = "stencil"
+version = "0.1.0"
+description = "CLI tool to generate HTML from a project config"
+authors = [{name="Krishanth K"}]
+
+[project.scripts]
+stencil = "stencil.cli:main"
+

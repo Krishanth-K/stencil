@@ -1,0 +1,9 @@
+app:
+  - title: Hello
+  - text: explain
+  - button:
+      label: Whaaaat
+      callback:  do_shiit()
+  - button:
+      label: theeeee
+      callback:  do_shsfsf()

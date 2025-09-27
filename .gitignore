@@ -1,2 +1,5 @@
 .python*
 pyrightconfig.json
+build/*
+stencil.egg-info/*
+stencil/__pycache__/*

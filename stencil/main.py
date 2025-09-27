@@ -115,47 +115,50 @@ def write_to_file(content : str):
         print("Written to file")
 
 
-
-with open("sten.yaml", 'r') as f:
-    data = yaml.safe_load(f)
-
-
-data : list[dict] = data.get("app")
-
-head = ""
-body = ""
-callbacks = []
-
-for element in data:
-    for attr, value in element.items():
-        if attr == "title":
-            body += get_head(value)
-
-        if attr == "button":
-            but : str = get_button(value["label"], value["callback"])
-            body += but
-
-            callbacks.append(value["callback"])
+def generate_html(data):
+    data_list = data.get("app")  # renamed to avoid shadowing 'data'
+    if not data_list:
+        raise ValueError("Config must have a top-level 'app' key with a list of elements")
 
 
-        if attr == "text":
-            text : str = get_text(value)
-            body += text
+    head = ""
+    body = ""
+    callbacks = []
 
-close_header = """
-            </body>
-            </html>
-        """
+    for element in data_list:
+        for attr, value in element.items():
+            if attr == "title":
+                head = get_head(value)
 
-if head == "":
-    print("Error: no title")
+            if attr == "button":
+                but : str = get_button(value["label"], value["callback"])
+                body += but
 
-
-stubs = get_stubs(callbacks)
-
-content = head + "<body>" + body + close_header + stubs
+                callbacks.append(value["callback"])
 
 
-write_to_file(content)
+            if attr == "text":
+                text : str = get_text(value)
+                body += text
 
-pprint(content)
+    close_header = """
+                </body>
+                </html>
+            """
+
+    if head == "":
+        print("Error: no title")
+
+    stubs = get_stubs(callbacks)
+    content = head + "<body>" + body + close_header + stubs
+
+    return content
+
+#
+# with open("stencil.yaml", 'r') as f:
+#     data = yaml.safe_load(f)
+#     pprint(data)
+#
+#     content = generate_html(data)
+#     write_to_file(content)
+#
