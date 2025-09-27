@@ -1,8 +1,0 @@
-{
-  "typeCheckingMode": "basic",
-  "venvPath": "/home/krish/.pyenv/versions/",
-  "venv": "stencil-venv",
-  "extraPaths": [
-    "/home/krish/.pyenv/versions/stencil-venv/lib/python3.10/site-packages/"
-  ]
-}
