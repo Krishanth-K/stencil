@@ -1,8 +1,6 @@
 from pprint import pprint
 import yaml
 
-with open("sten.yaml", 'r') as f:
-    data = yaml.safe_load(f)
 
 def get_title(title: str):
     return f"""
@@ -25,18 +23,42 @@ def get_text(text : str):
     cont = f'<p>{text}</p>'
     return cont
 
+def get_stubs(callbacks : list):
+    cont = "<script> \n"
+
+    for item in callbacks:
+        stub = f"function {item}"
+        stub += "{\
+                    // TODO: implement this\
+                }\
+                "
+        cont += stub
+
+    cont += "</script>"
+
+    return cont
+
+
+
 def write_to_file(content : str):
     with open("ui.html", 'w') as f:
         f.write(content)
         print("Written to file")
 
 
-data : list[dict] = data.get("app")
-pprint(data)
 
+
+with open("sten.yaml", 'r') as f:
+    data = yaml.safe_load(f)
+
+
+
+
+data : list[dict] = data.get("app")
 
 title = ""
 body = ""
+callbacks = []
 
 for element in data:
     for attr, value in element.items():
@@ -46,6 +68,9 @@ for element in data:
         if attr == "button":
             but : str = get_button(value["label"], value["callback"])
             body += but
+
+            callbacks.append(value["callback"])
+
 
         if attr == "text":
             text : str = get_text(value)
@@ -59,7 +84,10 @@ close_header = """
 if title == "":
     print("Error: no title")
 
-content = title + body + close_header
+
+stubs = get_stubs(callbacks)
+
+content = title + body + close_header + stubs
 
 
 write_to_file(content)
