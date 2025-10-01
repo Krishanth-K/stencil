@@ -1,4 +1,1 @@
-5. Integratio
-
-
-1. Hot reload
+handle multiple pages
