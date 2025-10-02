@@ -78,7 +78,7 @@ def main():
         sys.exit(1)
 
     # Create a windowed mode window and its OpenGL context
-    window = glfw.create_window(1280, 720, {title} None, None)
+    window = glfw.create_window(1280, 720, "{title}", None, None)
     if not window:
         print("Failed to create GLFW window")
         glfw.terminate()
@@ -110,8 +110,10 @@ def get_footer():
 
         glfw.swap_buffers(window)
 
-        renderer.shutdown()
-        glfw.terminate()
+    renderer.shutdown()
+    glfw.terminate()
+
+main()
     """
 
 

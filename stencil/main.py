@@ -1,20 +1,18 @@
-from html_backend import generate_html
-from imgui_backend import generate_imgui
-from yaml import safe_load
-from pprint import pprint
+from stencil.html_backend import generate_html
+from stencil.imgui_backend import generate_imgui
 
-def generate_ui(data):
-    backend = data.get("backend")
+def run(config_data, args):
+    backend = args.backend
+    if backend == 'html' and 'backend' in config_data:
+        backend = config_data['backend']
 
-    if not backend or backend == "html":
-        return generate_html(data)
+    if backend == "html":
+        html_code = generate_html(config_data)
+        with open("index.html", "w") as f:
+            f.write(html_code)
+        print("HTML generated at index.html")
     elif backend == "imgui":
-        return generate_imgui(data)
-
-
-with open("stencil.yaml", 'r') as f:
-    content = f.read()
-    content = safe_load(content)
-
-    # print(content)
-    pprint(generate_ui(content))
+        imgui_code = generate_imgui(config_data)
+        with open("ui.py", "w") as f:
+            f.write(imgui_code)
+        print("ImGui code generated at ui.py")
