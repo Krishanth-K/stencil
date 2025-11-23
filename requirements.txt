@@ -1,2 +1,4 @@
 PyYAML==6.0.3
-stencil @ file:///home/krish/Dev/mini-proj/stencil
+glfw
+PyOpenGL
+imgui

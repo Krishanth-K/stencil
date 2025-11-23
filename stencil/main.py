@@ -7,6 +7,7 @@ def run(config_data, args):
         backend = config_data['backend']
 
     if backend == "html":
+        print("Using html backend")
         html_code = generate_html(config_data)
         with open("index.html", "w") as f:
             f.write(html_code)

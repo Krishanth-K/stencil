@@ -1,13 +1,33 @@
-backend: imgui
+#NOTE: CONFIG FILE
+#
+# Stencil Configuration for the Admin Dashboard
+# --------------------------------------------
+# This file defines the UI elements for the application using Stencil.
+# The 'backend' can be 'html' or 'imgui'.
+# The 'app' section contains the list of UI elements to be rendered.
+
+config:
+  backend: "html"
+  version: "1.0.0"
+  author: "Admin Team"
+
 app:
-  - title: Hello
-  - text: explain
+  - title: "Admin Dashboard"
+
+  - text: 
+      Welcome to the central control panel.
+      Please select an option below to proceed.
+
   - button:
-      label: Whaaaat
-      callback:  do_shiit()
+      label: "View Analytics"
+      callback: "onViewAnalytics"
+
   - button:
-      label: Whaaaat
-      callback:  do_shiit()
+      label: "Manage Users"
+      callback: "onManageUsers"
+
   - button:
-      label: theeeee
-      callback:  do_shsfsf()
+      label: "System Settings"
+      callback: "onSystemSettings"
+
+  - text: "© 2025 Admin Corp."

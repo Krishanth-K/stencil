@@ -1,83 +1,56 @@
-# file: test_imgui.py
-
 import sys
+import json
+
+def generate_imgui(data):
+    """
+    Generates a standalone Python file (ui.py) that renders an ImGui interface
+    based on the provided 'data' structure.
+    """
+    title = data.get("title", "ImGui Window")
+    app_data = data.get("app")
+
+    if not app_data:
+        print("Error: Config must have a top-level 'app' key with a list of elements")
+        sys.exit(1)
+
+    # --- Create callback stubs ---
+    callback_defs = ""
+    for element in app_data:
+        if "button" in element:
+            cb_name = element["button"]["callback"]
+            callback_defs += f"""
+def {cb_name}():
+    print("Callback '{cb_name}' triggered")
+"""
+
+    # --- Build the ImGui rendering logic ---
+    render_logic = ""
+    for element in app_data:
+        if "text" in element:
+            render_logic += f'        imgui.text("""{element["text"]}""")\n'
+        elif "button" in element:
+            label = element["button"]["label"]
+            cb = element["button"]["callback"]
+            render_logic += (
+                f'        if imgui.button("{label}"):\n'
+                f'            {cb}()\n'
+            )
+
+    # --- Assemble the full code for ui.py ---
+    content = f'''import sys
 import glfw
 import OpenGL.GL as gl
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
 
+{callback_defs}
+
 def main():
-    # Initialize GLFW
     if not glfw.init():
         print("Could not initialize GLFW")
         sys.exit(1)
 
-    # Create a windowed mode window and its OpenGL context
-    window = glfw.create_window(1280, 720, "PyImGui Test", None, None)
-    if not window:
-        print("Failed to create GLFW window")
-        glfw.terminate()
-        sys.exit(1)
-
-    glfw.make_context_current(window)
-
-
-    # Initialize ImGui
-    imgui.create_context()
-    renderer = GlfwRenderer(window)
-
-
-    # Main Loop
-    while not glfw.window_should_close(window):
-        glfw.poll_events()  # MUST call before imgui.new_frame()
-        renderer.process_inputs()
-
-        imgui.new_frame()
-
-        # === Your UI ===
-        imgui.begin("Hello ImGui")
-        imgui.text("This is a working ImGui window!")
-        if imgui.button("Click Me"):
-            print("Button clicked!")
-        imgui.end()
-        # ==============
-
-        # Render
-        gl.glClearColor(0.1, 0.1, 0.1, 1)
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-
-        imgui.render()
-        renderer.render(imgui.get_draw_data())
-
-        glfw.swap_buffers(window)
-
-    # -------------------------------
-    # 4. Cleanup
-    # -------------------------------
-    renderer.shutdown()
-    glfw.terminate()
-
-
-def get_header(title):
-    if not title:
-        title = "Imgui window"
-
-    return f"""
-import sys
-import glfw
-import OpenGL.GL as gl
-import imgui
-from imgui.integrations.glfw import GlfwRenderer
-
-
-def main():
-    # Initialize GLFW
-    if not glfw.init():
-        print("Could not initialize GLFW")
-        sys.exit(1)
-
-    # Create a windowed mode window and its OpenGL context
     window = glfw.create_window(1280, 720, "{title}", None, None)
     if not window:
         print("Failed to create GLFW window")
@@ -85,23 +58,17 @@ def main():
         sys.exit(1)
 
     glfw.make_context_current(window)
-
-
-    # Initialize ImGui
     imgui.create_context()
     renderer = GlfwRenderer(window)
 
-
-    # Main Loop
     while not glfw.window_should_close(window):
-        glfw.poll_events()  # MUST call before imgui.new_frame()
+        glfw.poll_events()
         renderer.process_inputs()
-
         imgui.new_frame()
-    """
 
-def get_footer():
-    return """
+        imgui.begin("{title}")
+{render_logic}        imgui.end()
+
         gl.glClearColor(0.1, 0.1, 0.1, 1)
         gl.glClear(gl.GL_COLOR_BUFFER_BIT)
 
@@ -113,18 +80,15 @@ def get_footer():
     renderer.shutdown()
     glfw.terminate()
 
-main()
-    """
 
+if __name__ == "__main__":
+    main()
+'''
 
-def generate_imgui(data):
-    title = data.get("title")
+    # --- Write to file ---
+    # with open("ui.py", "w") as f:
+    #     f.write(content)
+    # print("[+] UI successfully generated -> ui.py")
 
-    head = get_header(title)
-    foot = get_footer()
+    return content
 
-    body = ""
-
-    return head + body + foot
-
-# main()
