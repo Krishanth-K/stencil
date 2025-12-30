@@ -4,8 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python Versions](https://img.shields.io/pypi/pyversions/stencil.svg)](https://pypi.org/project/stencil/)
 
-`stencil` is a **lightweight CLI tool** that generates HTML files directly from a simple YAML or JSON configuration.
-No need to manually write boilerplate HTML and CSS — just describe your UI in a config file, and `stencil` handles the rest.
+`stencil` is a **lightweight CLI tool** that generates UI across various backends (like HTML and ImGui) directly from a simple YAML or JSON configuration. It's designed to be easily adaptable to new UI toolkits and frameworks.
+No need to manually write boilerplate code — just describe your UI in a config file, and `stencil` handles the rest.
 
 ---
 
@@ -14,6 +14,7 @@ No need to manually write boilerplate HTML and CSS — just describe your UI in 
 * 📝 Define UI elements (title, text, button, input, separator) in YAML or JSON.
 * ⚡ Generates a ready-to-use `index.html` with clean CSS styling.
 * 🖥️ Generates standalone Python ImGui applications.
+* 🧩 Features an extensible architecture for easy adaptation to new UI toolkits.
 * 🖱️ Automatic JavaScript stubs for button callbacks, including interactive input handling.
 * 🔎 Auto-detects config file (`stencil.yaml` or `stencil.json`) in your project root.
 * ⏱️ **Hot-reload support**: automatically regenerate HTML when the config file changes (`stencil generate --watch`).
@@ -98,7 +99,7 @@ stencil generate --watch
 
 ## 🖼 Example Output
 
-Given a `stencil.yaml` config that includes an input field and a "Submit" button:
+Stencil's generated UIs are designed to be functional and clean. Here's what you can expect with a configuration that includes a title, text, an input field, and an interactive "Submit" button:
 
 *   **HTML Backend (`stencil generate`):** Produces a styled `index.html`. Typing into the input and clicking "Submit" will trigger a JavaScript `alert()` showing your input.
 *   **ImGui Backend (`stencil generate --backend imgui`):** Produces a `ui.py` script. Running `python ui.py` will open a desktop window. Typing into the input and clicking "Submit" will print your input to the console.
@@ -161,15 +162,10 @@ This project is licensed under the MIT License.
 
 ## 💡 Inspiration
 
-Stencil was built to simplify rapid prototyping of HTML pages from configs. Perfect for:
+Stencil was built to simplify rapid prototyping of UI pages from configs. Its extensible backend architecture makes it perfect for:
 
-* Mockups & quick demos
-* Teaching web basics
-* Auto-generating documentation UIs
-
----
-
-I can also **rewrite your “Example Output” section** to include a screenshot and a small live demo snippet showing **hot reload in action**, which will make the README way more appealing for users.
-
-Do you want me to do that next?
+* Mockups & quick demos across different UI frameworks.
+* Teaching UI basics with abstract component definitions.
+* Auto-generating interfaces for various applications with ease.
+* Rapidly adding support for new UI toolkits or frameworks.
 
