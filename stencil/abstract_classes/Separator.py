@@ -1,0 +1,2 @@
+class Separator:
+    pass

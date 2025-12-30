@@ -42,6 +42,18 @@ app:
       label: "Click Me!"
       callback: "onButtonClick"
 
+  - separator
+
+  # 'input': A text input field.
+  # 'label' is the visible label for the field.
+  # 'placeholder' is the text shown when the field is empty.
+  - input:
+      label: "Your Name"
+      placeholder: "Enter your name here"
+  - button:
+      label: "Submit"
+      callback: "onSubmitName"
+
   - text: "© 2025 Your Company"
 """
 

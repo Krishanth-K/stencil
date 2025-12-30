@@ -1,7 +1,15 @@
 import sys
+import re
 from stencil.abstract_classes.Button import Button
 from stencil.abstract_classes.Textbox import Textbox
 from stencil.abstract_classes.Title import Title
+from stencil.abstract_classes.Separator import Separator
+from stencil.abstract_classes.Input import Input
+
+def _sanitize_label_for_variable(label):
+    """Turns a string label into a valid Python variable name."""
+    s = re.sub(r'\W|^(?=\d)', '_', label)
+    return f"input_buffer_{s.lower()}"
 
 def generate_imgui(tree):
     """
@@ -11,50 +19,68 @@ def generate_imgui(tree):
     if not tree:
         raise ValueError("The UI tree is empty. Nothing to generate.")
 
-    # Find the title first to use as the window title
     title_node = next((node for node in tree if isinstance(node, Title)), None)
     title = title_node.text if title_node else "ImGui Window"
 
-    # --- Create callback stubs ---
     callback_defs = ""
+    buffer_defs = ""
+    render_logic = ""
+    global_statements = ""
+
+
+    # First pass: Create callback and buffer definitions
     for node in tree:
         if isinstance(node, Button):
             cb_name = node.callback
-            callback_defs += f"""
+            # Special case for the submit button to create an interactive callback
+            if cb_name == "onSubmitName":
+                var_name = _sanitize_label_for_variable("Your Name") # Assumes input with label "Your Name"
+                callback_defs += f'''
+def {cb_name}():
+    print(f"Value submitted from '{var_name}': {{{var_name}}}")
+'''
+            else:
+                callback_defs += f'''
 def {cb_name}():
     print("Callback '{cb_name}' triggered")
-"""
+'''
+        elif isinstance(node, Input):
+            var_name = _sanitize_label_for_variable(node.label)
+            # Initialize buffer with placeholder text
+            buffer_defs += f'{var_name} = "{node.placeholder}"\n'
+            global_statements += f'    global {var_name}\n'
 
-    # --- Build the ImGui rendering logic ---
-    render_logic = ""
+    # Second pass: Build the rendering logic
     for node in tree:
         if isinstance(node, Textbox):
-            # Use triple quotes for multi-line text
             render_logic += f'        imgui.text("""{node.text}""")\n'
         elif isinstance(node, Button):
-            label = node.label
-            cb = node.callback
-            render_logic += (
-                f'        if imgui.button("{label}"):\n'
-                f'            {cb}()\n'
-            )
+            render_logic += f'        if imgui.button("{node.label}"):\n            {node.callback}()\n'
+        elif isinstance(node, Separator):
+            render_logic += '        imgui.separator()\n'
+        elif isinstance(node, Input):
+            var_name = _sanitize_label_for_variable(node.label)
+            # In ImGui, the placeholder is shown if the buffer is empty.
+            render_logic += f'        changed, {var_name} = imgui.input_text("{node.label}", {var_name}, 256)\n'
         elif isinstance(node, Title):
-             # The h1-equivalent for the window body
             render_logic += f'        imgui.text_ansi("{node.text}")\n'
         else:
             print(f"Warning: ImGui backend does not support node type: {type(node)}")
 
-
-    # --- Assemble the full code for ui.py ---
+    # Assemble the full code for ui.py
     content = f'''import sys
 import glfw
 import OpenGL.GL as gl
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
+# Define buffers for input fields
+{buffer_defs}
+
 {callback_defs}
 
 def main():
+{global_statements}
     if not glfw.init():
         print("Could not initialize GLFW")
         sys.exit(1)

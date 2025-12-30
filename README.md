@@ -11,11 +11,12 @@ No need to manually write boilerplate HTML and CSS — just describe your UI in 
 
 ## ✨ Features
 
-* 📝 Define UI elements (title, text, button) in YAML or JSON.
+* 📝 Define UI elements (title, text, button, input, separator) in YAML or JSON.
 * ⚡ Generates a ready-to-use `index.html` with clean CSS styling.
-* 🖱️ Automatic JavaScript stubs for button callbacks.
+* 🖥️ Generates standalone Python ImGui applications.
+* 🖱️ Automatic JavaScript stubs for button callbacks, including interactive input handling.
 * 🔎 Auto-detects config file (`stencil.yaml` or `stencil.json`) in your project root.
-* ⏱️ **Hot-reload support**: automatically regenerate HTML when the config file changes (`stencil --watch`).
+* ⏱️ **Hot-reload support**: automatically regenerate HTML when the config file changes (`stencil generate --watch`).
 * 🎯 Zero setup — just install and run.
 
 ---
@@ -32,58 +33,75 @@ pip install stencil-ui
 
 ## 🚀 Usage
 
-### 1. Create a config file
+### 1. Initialize your project
 
-`stencil.yaml` in your project root:
-
-```yaml
-app:
-  - title: "My First Stencil Page"
-  - text: "Hello, world!"
-  - button:
-      label: "Click Me"
-      callback: "onClick"
-```
-
-### 2. Generate HTML
+Create a default `stencil.yaml` in your current directory:
 
 ```bash
-stencil
+stencil init
 ```
 
-> `index.html` will be generated in your project root.
+This will create a `stencil.yaml` file with a commented example:
+
+```yaml
+# Stencil Configuration File
+# ---
+# ... (full commented default config) ...
+#
+# app:
+#   - title: "My Awesome App"
+#   - text: |
+#       Welcome to Stencil!
+#   - button:
+#       label: "Click Me!"
+#       callback: "onButtonClick"
+#   - separator
+#   - input:
+#       label: "Your Name"
+#       placeholder: "Enter your name here"
+#   - button:
+#       label: "Submit"
+#       callback: "onSubmitName"
+#   - text: "© 2025 Your Company"
+```
+(For the actual content, run `stencil init` in an empty directory)
+
+### 2. Generate UI
+
+Generate `index.html` (default) or `ui.py` based on your `stencil.yaml` config:
+
+```bash
+# Generate HTML (default backend)
+stencil generate
+
+# Or specify a backend, e.g., for an ImGui desktop app
+stencil generate --backend imgui
+```
+
+> `index.html` or `ui.py` will be generated in your project root.
 
 ---
 
 ### 3. Optional: Hot Reload
 
-Regenerate HTML automatically when you edit your config file:
+Regenerate UI automatically when you edit your config file:
 
 ```bash
-stencil --watch
+stencil generate --watch
 ```
 
 * Monitors `stencil.yaml` or `stencil.json`
-* Automatically updates `index.html` whenever the file changes
-* Optional: use a browser live-reload extension to see changes immediately
+* Automatically updates `index.html` or `ui.py` whenever the file changes
+* Optional: use a browser live-reload extension to see HTML changes immediately
 
 ---
 
 ## 🖼 Example Output
 
-Given the above config, Stencil produces a styled HTML page like this:
+Given a `stencil.yaml` config that includes an input field and a "Submit" button:
 
-```
-<title>My First Stencil Page</title>
-<h1>My First Stencil Page</h1>
-<p>Hello, world!</p>
-<button onclick="onClick">Click Me</button>
-<script>
-function onClick() {
-    // TODO: implement this
-}
-</script>
-```
+*   **HTML Backend (`stencil generate`):** Produces a styled `index.html`. Typing into the input and clicking "Submit" will trigger a JavaScript `alert()` showing your input.
+*   **ImGui Backend (`stencil generate --backend imgui`):** Produces a `ui.py` script. Running `python ui.py` will open a desktop window. Typing into the input and clicking "Submit" will print your input to the console.
 
 ---
 
@@ -96,13 +114,13 @@ Stencil looks for either:
 
 Supported elements:
 
-| Element  | Example                  | Output                      |
-| -------- | ------------------------ | --------------------------- |
-| `title`  | `- title: "My Page"`     | `<title>` + `<h1>`          |
-| `text`   | `- text: "Hello World!"` | `<p>Hello World!</p>`       |
-| `button` | see example above        | `<button>` with JS callback |
-
----
+| Element   | Example                               | Output (HTML/ImGui)                 |
+| --------- | ------------------------------------- | ----------------------------------- |
+| `title`   | `- title: "My Page"`                  | `<title>`+`<h1>` / Window Title + `imgui.text_ansi` |
+| `text`    | `- text: "Hello World!"`              | `<p>` / `imgui.text`                |
+| `button`  | `- button: {label: "Click", cb: "my"}` | `<button>` / `imgui.button`         |
+| `separator` | `- separator`                         | `<hr>` / `imgui.separator`          |
+| `input`   | `- input: {label: "Name", ph: "Enter"}` | `<input type="text">` / `imgui.input_text` |
 
 ## 📂 Project Structure Example
 
