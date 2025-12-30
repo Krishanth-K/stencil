@@ -1,3 +1,8 @@
+from stencil.abstract_classes.Button import Button
+from stencil.abstract_classes.Textbox import Textbox
+from stencil.abstract_classes.Title import Title
+
+
 def get_head(title: str):
     css = get_css()
 
@@ -13,6 +18,9 @@ def get_head(title: str):
           </head>
         """
 
+def get_title(title: str):
+    return f"<h1>{title}</h1>"
+
 def get_button(label : str, callback : str):
     cont = f'<button onclick="{callback}">{label}</button>'
     return cont
@@ -26,13 +34,13 @@ def get_stubs(callbacks : list):
 
     for item in callbacks:
         stub = f"function {item}"
-        stub += "{\
+        stub += "() {\
                     // TODO: implement this\
                 }\
                 "
         cont += stub
 
-    cont += "</script>"
+    cont += "\n</script>"
 
     return cont
 
@@ -109,42 +117,43 @@ def write_to_file(content : str):
         f.write(content)
         print("Written to file")
 
-def generate_html(data):
-    data_list = data.get("app")  # renamed to avoid shadowing 'data'
-    if not data_list:
-        raise ValueError("Config must have a top-level 'app' key with a list of elements")
-
+def generate_html(tree):
+    if not tree:
+        raise ValueError("The UI tree is empty. Nothing to generate.")
 
     head = ""
     body = ""
     callbacks = []
 
-    for element in data_list:
-        for attr, value in element.items():
-            if attr == "title":
-                head = get_head(value)
+    # Find the title first to generate the head
+    title_node = next((node for node in tree if isinstance(node, Title)), None)
+    if title_node:
+        head = get_head(title_node.text)
+        body += get_title(title_node.text)
+    else:
+        # Default title if none is provided in the config
+        head = get_head("Stencil Generated Page")
+        print("Warning: No title found in config. Using a default title.")
 
-            if attr == "button":
-                but : str = get_button(value["label"], value["callback"])
-                body += but
 
-                callbacks.append(value["callback"])
+    for node in tree:
+        if isinstance(node, Textbox):
+            body += get_text(node.text)
+        elif isinstance(node, Button):
+            body += get_button(node.label, node.callback)
+            callbacks.append(node.callback)
+        elif isinstance(node, Title):
+            pass # Already handled
+        else:
+            print(f"Warning: HTML backend does not support node type: {type(node)}")
 
 
-            if attr == "text":
-                text : str = get_text(value)
-                body += text
-
-    close_header = """
+    close_body = """
                 </body>
                 </html>
             """
 
-    if head == "":
-        print("Error: no title")
-
     stubs = get_stubs(callbacks)
-    content = head + "<body>" + body + close_header + stubs
+    content = head + "<body>" + body + close_body + stubs
 
     return content
-

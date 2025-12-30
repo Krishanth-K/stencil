@@ -1,23 +1,25 @@
 import sys
-import json
+from stencil.abstract_classes.Button import Button
+from stencil.abstract_classes.Textbox import Textbox
+from stencil.abstract_classes.Title import Title
 
-def generate_imgui(data):
+def generate_imgui(tree):
     """
     Generates a standalone Python file (ui.py) that renders an ImGui interface
-    based on the provided 'data' structure.
+    based on the provided UI tree.
     """
-    title = data.get("title", "ImGui Window")
-    app_data = data.get("app")
+    if not tree:
+        raise ValueError("The UI tree is empty. Nothing to generate.")
 
-    if not app_data:
-        print("Error: Config must have a top-level 'app' key with a list of elements")
-        sys.exit(1)
+    # Find the title first to use as the window title
+    title_node = next((node for node in tree if isinstance(node, Title)), None)
+    title = title_node.text if title_node else "ImGui Window"
 
     # --- Create callback stubs ---
     callback_defs = ""
-    for element in app_data:
-        if "button" in element:
-            cb_name = element["button"]["callback"]
+    for node in tree:
+        if isinstance(node, Button):
+            cb_name = node.callback
             callback_defs += f"""
 def {cb_name}():
     print("Callback '{cb_name}' triggered")
@@ -25,16 +27,23 @@ def {cb_name}():
 
     # --- Build the ImGui rendering logic ---
     render_logic = ""
-    for element in app_data:
-        if "text" in element:
-            render_logic += f'        imgui.text("""{element["text"]}""")\n'
-        elif "button" in element:
-            label = element["button"]["label"]
-            cb = element["button"]["callback"]
+    for node in tree:
+        if isinstance(node, Textbox):
+            # Use triple quotes for multi-line text
+            render_logic += f'        imgui.text("""{node.text}""")\n'
+        elif isinstance(node, Button):
+            label = node.label
+            cb = node.callback
             render_logic += (
                 f'        if imgui.button("{label}"):\n'
                 f'            {cb}()\n'
             )
+        elif isinstance(node, Title):
+             # The h1-equivalent for the window body
+            render_logic += f'        imgui.text_ansi("{node.text}")\n'
+        else:
+            print(f"Warning: ImGui backend does not support node type: {type(node)}")
+
 
     # --- Assemble the full code for ui.py ---
     content = f'''import sys
@@ -42,7 +51,6 @@ import glfw
 import OpenGL.GL as gl
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
-
 
 {callback_defs}
 
@@ -67,7 +75,8 @@ def main():
         imgui.new_frame()
 
         imgui.begin("{title}")
-{render_logic}        imgui.end()
+{render_logic}
+        imgui.end()
 
         gl.glClearColor(0.1, 0.1, 0.1, 1)
         gl.glClear(gl.GL_COLOR_BUFFER_BIT)
@@ -84,11 +93,4 @@ def main():
 if __name__ == "__main__":
     main()
 '''
-
-    # --- Write to file ---
-    # with open("ui.py", "w") as f:
-    #     f.write(content)
-    # print("[+] UI successfully generated -> ui.py")
-
     return content
-

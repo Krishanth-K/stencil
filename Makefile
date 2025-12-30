@@ -2,6 +2,9 @@
 
 all: build install
 
+edit:
+	python install -e .
+
 build:
 	python -m build
 
