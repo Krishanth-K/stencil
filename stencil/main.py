@@ -1,17 +1,19 @@
-from stencil.html_backend import generate_html
-from stencil.imgui_backend import generate_imgui
 from stencil.abstract_classes.Button import Button
+from stencil.abstract_classes.Input import Input
+from stencil.abstract_classes.Separator import Separator
 from stencil.abstract_classes.Textbox import Textbox
 from stencil.abstract_classes.Title import Title
-from stencil.abstract_classes.Separator import Separator
-from stencil.abstract_classes.Input import Input
+from stencil.curses_backend import generate_curses
+from stencil.html_backend import generate_html
+from stencil.imgui_backend import generate_imgui
+
 
 def run(tree, config_data, args):
     # Determine backend with correct priority: CLI > config > default
     if args.backend:
         backend = args.backend
     else:
-        backend = config_data.get('config', {}).get('backend', 'html')
+        backend = config_data.get("config", {}).get("backend", "html")
 
     if backend == "html":
         print("Using html backend")
@@ -27,11 +29,19 @@ def run(tree, config_data, args):
             f.write(imgui_code)
         print("ImGui code generated at ui.py")
 
+    elif backend == "curses":
+        print("Using curses backend")
+        curses_code = generate_curses(tree)
+        with open("tui.py", "w") as f:
+            f.write(curses_code)
+        print("Curses code generated at tui.py")
+
+
 def generate_tree(config_data):
     tree = []
     if not isinstance(config_data, dict) or "app" not in config_data:
         raise ValueError("Invalid config: 'app' key not found.")
-        
+
     for element in config_data["app"]:
         # Handle simple string elements like '- separator'
         if isinstance(element, str):
