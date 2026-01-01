@@ -13,6 +13,8 @@ from stencil.main import generate_tree, run
 CONFIG_FILES = ["stencil.yaml", "stencil.json"]
 DEFAULT_YAML_PATH = Path.cwd() / "stencil.yaml"
 
+SUPPORTED_BACKENDS = ["html", "imgui", "curses"]
+
 
 DEFAULT_YAML_CONTENT = """ # Stencil Configuration File
 # --------------------------
@@ -98,6 +100,19 @@ def do_generate(args):
                 config_data = json.load(f)
 
         tree = generate_tree(config_data)
+
+        backend_to_use = args.backend
+        if not backend_to_use:
+            backend_to_use = config_data.get("config", {}).get("backend", "html")
+
+        if backend_to_use not in SUPPORTED_BACKENDS:
+            print(
+                f"Error: Unsupported backend '{backend_to_use}'. Supported backends are: {', '.join(SUPPORTED_BACKENDS)}",
+                file=sys.stderr,
+            )
+            return 1
+
+        args.backend = backend_to_use  # Ensure args.backend is always set for run()
         run(tree, config_data, args)
     except (ValueError, TypeError) as e:
         print(f"Error processing config file '{config_path.name}': {e}", file=sys.stderr)
@@ -118,12 +133,16 @@ class ConfigChangeHandler(FileSystemEventHandler):
             if time.time() - self.last_run < 1:
                 return
             print(f"\nDetected change in {Path(event.src_path).name}, regenerating...")
-            do_generate(self.args)
+            # Create a shallow copy of args and set watch to False for single generation
+            temp_args = argparse.Namespace(**vars(self.args))
+            temp_args.watch = False
+            do_generate(temp_args)
             self.last_run = time.time()
 
 
 def main():
     parser = argparse.ArgumentParser(description="A tool to generate UI from a simple config file.", prog="stencil")
+    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s 0.2.4")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     subparsers.add_parser("init", help="Create a default stencil.yaml file.")
