@@ -14,6 +14,7 @@ dist/
 # Generated files
 index.html
 ui.py
+tui.py
 
 # cache
 imgui.ini

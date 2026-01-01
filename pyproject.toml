@@ -9,15 +9,15 @@ requires-python = ">=3.9"
 
 dependencies = [
     "PyYAML>=6.0.3",
-    "watchdog>=3.0.0"
+    "watchdog>=3.0.0",
+    "glfw",
+    "PyOpenGL",
+    "imgui[glfw]",
+    "curses"
 ]
 
 [project.optional-dependencies]
-imgui = [
-    "glfw",
-    "PyOpenGL",
-    "imgui[glfw]"
-]
+imgui = []
 
 [project.scripts]
 stencil = "stencil.cli:main"
