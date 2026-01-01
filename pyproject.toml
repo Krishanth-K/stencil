@@ -1,6 +1,6 @@
 [project]
 name = "stencil-ui"
-version = "0.2.4"
+version = "0.2.5"
 description = "CLI tool to generate UI code for HTML, ImGui, or Curses from a simple config file"
 readme = "README.md"
 authors = [{name="Krishanth K"}]
@@ -10,13 +10,14 @@ requires-python = ">=3.9"
 dependencies = [
     "PyYAML>=6.0.3",
     "watchdog>=3.0.0",
+]
+
+[project.optional-dependencies]
+imgui = [
     "glfw",
     "PyOpenGL",
     "imgui[glfw]"
 ]
-
-[project.optional-dependencies]
-imgui = []
 
 [project.scripts]
 stencil = "stencil.cli:main"
