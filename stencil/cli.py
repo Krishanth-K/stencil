@@ -142,7 +142,7 @@ class ConfigChangeHandler(FileSystemEventHandler):
 
 def main():
     parser = argparse.ArgumentParser(description="A tool to generate UI from a simple config file.", prog="stencil")
-    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s 0.2.4")
+    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s 0.2.6")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     subparsers.add_parser("init", help="Create a default stencil.yaml file.")

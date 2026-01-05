@@ -8,7 +8,7 @@ config:
   # The backend determines the output format.
   # Supported backends: "html", "imgui"
   # Default is "html".
-  backend: "imgui"
+  backend: "html"
   version: "1.0.0"
   author: "Your Name"
 
