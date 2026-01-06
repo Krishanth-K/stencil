@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-def generate_react(tree, output_dir="my_react_app/src"):
+def generate_react(tree, output_dir="output/react/src"):
     if not tree:
         raise ValueError("The UI tree is empty. Nothing to generate.")
 

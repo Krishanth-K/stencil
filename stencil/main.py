@@ -1,5 +1,6 @@
 import importlib
 import traceback
+import os
 
 def run(tree, config_data, args):
     # Determine backend with correct priority: CLI > config > default
@@ -12,9 +13,11 @@ def run(tree, config_data, args):
 
         # Simplified logic for each backend
         output_dir_defaults = {
-            "html": "output/html_app",
+            "html": "output/html",
+            "react": "output/react/src", # React expects to write to a 'src' directory
             "flutter": "output/flutter_app",
-            "react": "my_react_app/src", # Default output for React
+            "imgui": "output/imgui",
+            "curses": "output/curses",
         }
         output_dir = config_data.get("config", {}).get("output_dir", output_dir_defaults.get(backend_name, "."))
 
@@ -33,10 +36,14 @@ def run(tree, config_data, args):
             # Legacy backends are functions
             generate_func = getattr(backend_module, f"generate_{backend_name}")
             code = generate_func(tree)
+            
+            os.makedirs(output_dir, exist_ok=True)
             filename = "ui.py" if backend_name == "imgui" else "tui.py"
-            with open(filename, "w") as f:
+            filepath = os.path.join(output_dir, filename)
+            
+            with open(filepath, "w") as f:
                 f.write(code)
-            print(f"{backend_name.capitalize()} code generated at {filename}")
+            print(f"{backend_name.capitalize()} code generated at {filepath}")
 
     except ImportError:
         print(f"Error: Could not find or import the '{backend_name}' backend.")

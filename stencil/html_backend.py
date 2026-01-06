@@ -4,7 +4,7 @@ from pathlib import Path
 # Assuming this script is in stencil/
 STYLE_PATH = Path(__file__).parent / "style.css"
 
-def generate_html(tree, output_dir="."):
+def generate_html(tree, output_dir="output/html"):
     """
     Generates an index.html file and a style.css file from the UI tree.
     """

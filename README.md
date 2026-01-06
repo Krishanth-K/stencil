@@ -113,11 +113,11 @@ app:
 
 Based on the configuration example above, here's what `stencil` will generate for each backend:
 
-*   **HTML (`-b html`)**: Creates an `index.html` file with basic styling and a `main.js` file with JavaScript stubs for your callbacks.
-*   **React (`-b react`)**: Generates a set of React components and an `App.tsx` file in `my_react_app/src`. Run `npm run dev` in `my_react_app` to start the development server.
-*   **Flutter (`-b flutter`)**: Generates a `main.dart` file in `output/flutter_app/lib`. Run `flutter run` in `output/flutter_app` to launch the mobile app.
-*   **ImGui (`-b imgui`)**: Creates a `ui.py` file. Run `python ui.py` to launch a native desktop window with your UI elements. Callbacks are generated as placeholder Python functions.
-*   **Curses (`-b curses`)**: Creates a `ui.py` file. Run `python ui.py` in your terminal to launch a text-based UI. Use Tab to navigate and Enter to press buttons.
+*   **HTML (`-b html`)**: Creates an `index.html` and `style.css` in `output/html/`.
+*   **React (`-b react`)**: Generates a set of React components and an `App.tsx` file in `output/react/src`. To use this, you need a React project.
+*   **Flutter (`-b flutter`)**: Creates a new Flutter project in `output/flutter_app/` and generates the `main.dart` file. Run `flutter run` in `output/flutter_app` to launch the mobile app.
+*   **ImGui (`-b imgui`)**: Creates a `ui.py` file in `output/imgui/`. Run `python output/imgui/ui.py` to launch a native desktop window.
+*   **Curses (`-b curses`)**: Creates a `tui.py` file in `output/curses/`. Run `python output/curses/tui.py` in your terminal to launch a text-based UI.
 
 ---
 
