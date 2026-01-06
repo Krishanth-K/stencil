@@ -1,4 +1,3 @@
-import re
 from stencil.abstract_classes.Button import Button
 from stencil.abstract_classes.Textbox import Textbox
 from stencil.abstract_classes.Title import Title
@@ -68,19 +67,19 @@ def main(stdscr):
             is_focused = interactive_widgets.index(i) == focused_widget_idx if i in interactive_widgets else False
             
             if widget['type'] == 'title':
-                stdscr.addstr(y_pos, x_pos - len(widget['text']) // 2, widget['text'], curses.A_BOLD | curses.color_pair(1))
+                stdscr.addstr(y_pos, max(0, x_pos - len(widget['text']) // 2), widget['text'], curses.A_BOLD | curses.color_pair(1))
                 y_pos += 2
             elif widget['type'] == 'textbox':
                 for line in widget['text'].splitlines():
-                    stdscr.addstr(y_pos, x_pos - len(line) // 2, line)
+                    stdscr.addstr(y_pos, max(0, x_pos - len(line) // 2), line)
                     y_pos += 1
             elif widget['type'] == 'separator':
-                stdscr.addstr(y_pos, x_pos - 10, "─" * 20)
+                stdscr.addstr(y_pos, max(0, x_pos - 10), "-" * 20)
                 y_pos += 1
             elif widget['type'] == 'button':
                 label = "[ " + widget['label'] + " ]"
                 attr = curses.color_pair(2) if is_focused else curses.A_NORMAL
-                stdscr.addstr(y_pos, x_pos - len(label) // 2, label, attr)
+                stdscr.addstr(y_pos, max(0, x_pos - len(label) // 2), label, attr)
                 y_pos += 1
             elif widget['type'] == 'input':
                 label = widget['label'] + ": "
@@ -88,8 +87,8 @@ def main(stdscr):
                 line = label + buffer
                 
                 attr = curses.color_pair(2) if is_focused else curses.A_NORMAL
-                stdscr.addstr(y_pos, x_pos - len(line) // 2, label)
-                stdscr.addstr(y_pos, x_pos - len(line) // 2 + len(label), buffer, attr)
+                stdscr.addstr(y_pos, max(0, x_pos - len(line) // 2), label)
+                stdscr.addstr(y_pos, max(0, x_pos - len(line) // 2 + len(label)), buffer, attr)
                 y_pos += 1
 
         stdscr.refresh()

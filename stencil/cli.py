@@ -18,7 +18,7 @@ from stencil.abstract_classes.Title import Title
 CONFIG_FILES = ["stencil.yaml", "stencil.json"]
 DEFAULT_YAML_PATH = Path.cwd() / "stencil.yaml"
 
-SUPPORTED_BACKENDS = ["html", "imgui", "curses", "react", "flutter", "tkinter"]
+SUPPORTED_BACKENDS = ["html", "imgui", "curses", "flutter", "react"]
 
 
 DEFAULT_YAML_CONTENT = """ # Stencil Configuration File
@@ -114,11 +114,11 @@ def generate_tree(config_data):
         elif element_type == "text":
             tree.append(Textbox(value))
         elif element_type == "button":
-            if not isinstance(value, dict) or "text" not in value:
+            if not isinstance(value, dict) or "label" not in value:
                 raise ValueError(f"Invalid button format: {value}")
-            tree.append(Button(**value))
+            tree.append(Button(text=value.pop('label'), **value))
         elif element_type == "input":
-            if not isinstance(value, dict) or "name" not in value:
+            if not isinstance(value, dict) or "label" not in value:
                 raise ValueError(f"Invalid input format: {value}")
             tree.append(Input(**value))
         elif element_type == "separator":
@@ -185,7 +185,7 @@ class ConfigChangeHandler(FileSystemEventHandler):
 
 def main():
     parser = argparse.ArgumentParser(description="A tool to generate UI from a simple config file.", prog="stencil")
-    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s 0.2.6")
+    parser.add_argument("-v", "--version", action="version", version="%(prog)s 0.2.6")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     subparsers.add_parser("init", help="Create a default stencil.yaml file.")

@@ -1,163 +1,256 @@
-
 import os
-import subprocess
-from .abstract_classes.Component import Component
+from pathlib import Path
 
-def to_camel_case(snake_str):
-    """Converts snake_case_string to CamelCaseString."""
-    return "".join(x.capitalize() for x in snake_str.lower().split("_"))
+# Placeholder for future styling if needed for React components
+# STYLE_PATH = Path(__file__).parent / "style.css" 
 
-class ReactBackend:
-    def __init__(self, components: list[Component], output_dir: str = "output/react_app"):
-        self.components = components
-        self.output_dir = output_dir
-        self.app_name = os.path.basename(output_dir)
+def generate_react(tree, output_dir="my_react_app/src"):
+    """
+    Generates React components and an App.tsx file from the UI tree.
+    """
+    if not tree:
+        raise ValueError("The UI tree is empty. Nothing to generate.")
 
-    def generate(self):
-        """Generates a complete React project."""
-        print(f"Generating React project in {self.output_dir}...")
+    app_dir = Path(output_dir)
+    components_dir = app_dir / "components"
+    os.makedirs(components_dir, exist_ok=True)
 
-        # 1. Scaffold a new React + Vite + SWC project
-        self._create_vite_project()
+    # --- Generate individual React components ---
+    # (These will be dynamically created based on the stencil tree)
+    # For now, let's just create placeholder files for structure
+    component_imports = []
+    generated_component_types = set()
 
-        # 2. Install Tailwind CSS
-        self._setup_tailwind()
-
-        # 3. Generate React components from stencil.yaml
-        self._generate_app_jsx()
-
-        print("\nGeneration complete!")
-        print(f"To run your new React app:")
-        print(f"  cd {self.output_dir}")
-        print(f"  npm install")
-        print(f"  npm run dev")
-
-    def _run_command(self, command, cwd):
-        """Runs a shell command in a specified directory."""
-        print(f"Running command: {command} in {cwd}")
-        try:
-            result = subprocess.run(command, cwd=cwd, check=True, shell=True, capture_output=True, text=True)
-            print("STDOUT:\n", result.stdout)
-            print("STDERR:\n", result.stderr)
-        except subprocess.CalledProcessError as e:
-            print(f"Command failed with exit code {e.returncode}")
-            print("STDOUT:\n", e.stdout)
-            print("STDERR:\n", e.stderr)
-            raise
-        except subprocess.TimeoutExpired as e:
-            print(f"Command timed out after {timeout} seconds")
-            print("STDOUT:\n", e.stdout)
-            print("STDERR:\n", e.stderr)
-            raise
-
-    def _create_vite_project(self):
-        """Creates a new Vite project."""
-        if os.path.exists(self.output_dir):
-            print(f"Directory {self.output_dir} already exists. Skipping Vite creation.")
-            return
-
-        parent_dir = os.path.dirname(self.output_dir)
-        app_name = os.path.basename(self.output_dir)
-
-        # Create parent directory if it doesn't exist.
-        # Handles cases like 'output/my-app'
-        if parent_dir and not os.path.exists(parent_dir):
-            os.makedirs(parent_dir)
-
-        # The command will be run in the parent directory, or the current directory if there's no parent.
-        cwd = parent_dir or "."
-        
-        print(f"Scaffolding Vite project '{app_name}' in '{cwd}'...")
-        # Non-interactive command using `npm create vite`
-        self._run_command(f"npm create vite@latest {app_name} -- --template react-swc", cwd=cwd)
-
-    def _setup_tailwind(self):
-        """Installs and configures Tailwind CSS."""
-        print("Setting up Tailwind CSS...")
-        # Install Tailwind CSS dependencies
-        self._run_command("npm install -D tailwindcss postcss autoprefixer", cwd=self.output_dir)
-        # Initialize Tailwind CSS
-        self._run_command("npx tailwindcss init -p", cwd=self.output_dir)
-
-        # Configure tailwind.config.js
-        tailwind_config = f"""
-/** @type {{import('tailwindcss').Config}} */
-export default {{
-  content: [
-    "./index.html",
-    "./src/**/*.{{js,ts,jsx,tsx}}",
-  ],
-  theme: {{
-    extend: {{}},
-  }},
-  plugins: [],
-}}
-"""
-        with open(os.path.join(self.output_dir, "tailwind.config.js"), "w") as f:
-            f.write(tailwind_config)
-
-        # Configure src/index.css
-        index_css = """
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-"""
-        with open(os.path.join(self.output_dir, "src/index.css"), "w") as f:
-            f.write(index_css)
-
-    def _generate_app_jsx(self):
-        """Generates the main App.jsx file with components."""
-        print("Generating React components...")
-        body = []
-        for component in self.components:
-            component_type = component.__class__.__name__
-            if component_type == "Title":
-                body.append(f'<h1 className="text-4xl font-bold my-4">{component.text}</h1>')
-            elif component_type == "Textbox":
-                body.append(f'<p className="my-2">{component.text}</p>')
-            elif component_type == "Input":
-                label = getattr(component, 'label', to_camel_case(component.name))
-                body.append(f'''
-<div className="my-4">
-    <label htmlFor="{component.name}" className="block text-sm font-medium text-gray-700">{label}</label>
-    <input type="text" id="{component.name}" name="{component.name}" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-</div>
-''')
-            elif component_type == "Button":
-                body.append(f'<button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-2">{component.text}</button>')
-            elif component_type == "Separator":
-                body.append('<hr className="my-6" />')
-
-        app_jsx_content = f"""
+    # First pass: Generate individual React component files and collect imports
+    for component in tree:
+        comp_type = component.__class__.__name__
+        if comp_type == "Title" and "Title" not in generated_component_types:
+            with open(components_dir / "Title.tsx", "w") as f:
+                f.write("""
 import React from 'react';
+
+interface TitleProps {
+  text: string;
+}
+
+const Title: React.FC<TitleProps> = ({ text }) => {
+  return <h1 className=\"stencil-title\">{text}</h1>;
+};
+
+export default Title;
+"""
+            )
+            generated_component_types.add("Title")
+            component_imports.append("import Title from './components/Title';")
+
+        elif comp_type == "Textbox" and "Textbox" not in generated_component_types:
+            with open(components_dir / "Textbox.tsx", "w") as f:
+                f.write("""
+import React from 'react';
+
+interface TextboxProps {
+  text: string;
+}
+
+const Textbox: React.FC<TextboxProps> = ({ text }) => {
+  return <p className=\"stencil-text\">{text}</p>;
+};
+
+export default Textbox;
+"""
+            )
+            generated_component_types.add("Textbox")
+            component_imports.append("import Textbox from './components/Textbox';")
+            
+        elif comp_type == "Button" and "Button" not in generated_component_types:
+            with open(components_dir / "Button.tsx", "w") as f:
+                f.write("""
+import React from 'react';
+
+interface ButtonProps {
+  label: string;
+  onClick?: () => void;
+}
+
+const Button: React.FC<ButtonProps> = ({ label, onClick }) => {
+  return <button className=\"stencil-button\" onClick={onClick} >{label}</button>;
+};
+
+export default Button;
+"""
+            )
+            generated_component_types.add("Button")
+            component_imports.append("import Button from './components/Button';")
+
+        elif comp_type == "Input" and "Input" not in generated_component_types:
+            with open(components_dir / "Input.tsx", "w") as f:
+                f.write("""
+import React, { useState } from 'react';
+
+interface InputProps {
+  label: string;
+  placeholder?: string;
+}
+
+const Input: React.FC<InputProps> = ({ label, placeholder }) => {
+  const [value, setValue] = useState('');
+  return (
+    <div className=\"stencil-input-group\">
+      <label className=\"stencil-label\">{label}</label>
+      <input 
+        type="text" 
+        className=\"stencil-input\"
+        placeholder={placeholder} 
+        value={value} 
+        onChange={(e) => setValue(e.target.value)} 
+      />
+    </div>
+  );
+};
+
+export default Input;
+"""
+            )
+            generated_component_types.add("Input")
+            component_imports.append("import Input from './components/Input';")
+
+        elif comp_type == "Separator" and "Separator" not in generated_component_types:
+            with open(components_dir / "Separator.tsx", "w") as f:
+                f.write("""
+import React from 'react';
+
+const Separator: React.FC = () => {
+  return <hr className=\"stencil-separator\" />;
+};
+
+export default Separator;
+"""
+            )
+            generated_component_types.add("Separator")
+            component_imports.append("import Separator from './components/Separator';")
+    
+    # Second pass: Populate component_renders with all instances
+    component_renders = []
+    for component in tree:
+        comp_type = component.__class__.__name__
+        if comp_type == "Title":
+            component_renders.append(f'<Title text={{{component.text!r}}} />') # Use !r for raw representation
+        elif comp_type == "Textbox":
+            component_renders.append(f'<Textbox text={{{component.text!r}}} />') # Use !r for raw representation
+        elif comp_type == "Button":
+            callback_name = getattr(component, "callback", "undefined")
+            
+            # Hardcode onclick_attr for testing
+            onclick_attr = "onClick={{ () => console.log('BUTTON_CLICKED') }}"
+            
+            render_line = f'<Button label={{{component.label!r}}} {onclick_attr} />'
+            component_renders.append(render_line)
+        elif comp_type == "Input":
+            component_renders.append(f'<Input label={{{component.label!r}}} placeholder={{{component.placeholder!r}}} />')
+        elif comp_type == "Separator":
+            component_renders.append(f'<Separator />')
+
+    # Build import strings
+    imports_string = "\n".join(sorted(list(set(component_imports))))
+    renders_string = "\n      ".join(component_renders)
+
+    # --- Generate App.tsx ---
+    app_content = f"""
+import React from 'react';
+import './index.css'; // Assuming you'll have a main CSS file for global styles
+{imports_string}
 
 function App() {{
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-            {''.join(body)}
-        </div>
+    <div className="App stencil-container">
+      {renders_string}
     </div>
   );
 }}
 
 export default App;
 """
-        with open(os.path.join(self.output_dir, "src/App.jsx"), "w") as f:
-            f.write(app_jsx_content)
+    with open(app_dir / "App.tsx", "w") as f:
+        f.write(app_content)
+    
+    # --- Generate a basic CSS file for general styling ---
+    css_content = """
+.stencil-container {
+    font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #1c1e21;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 2rem auto;
+    box-sizing: border-box;
+}
 
-        # Overwrite the default main.jsx to ensure it's clean
-        main_jsx_content = """
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
+.stencil-title {
+    font-size: 2rem;
+    color: #1877f2;
+    margin-bottom: 1.5rem;
+}
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+.stencil-text {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.stencil-button {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #1877f2;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.stencil-button:hover {
+    background-color: #166fe5;
+}
+
+.stencil-separator {
+    border: 0;
+    height: 1px;
+    background-color: #dadde1;
+    margin: 1.5rem 0;
+}
+
+.stencil-input-group {
+    margin-bottom: 1rem;
+}
+
+.stencil-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #606770;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.stencil-input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccd0d5;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.stencil-input:focus {
+    outline: none;
+    border-color: #1877f2;
+    box-shadow: 0 0 0 2px #e7f3ff;
+}
 """
-        with open(os.path.join(self.output_dir, "src/main.jsx"), "w") as f:
-            f.write(main_jsx_content)
+    with open(app_dir / "index.css", "w") as f:
+        f.write(css_content)
+
+    print(f"React files generated in '{output_dir}' directory.")

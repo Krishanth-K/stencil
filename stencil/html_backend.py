@@ -47,8 +47,8 @@ def generate_html(tree, output_dir="."):
             if hasattr(component, "callback"):
                 callbacks.add(component.callback)
         elif comp_type == "Input":
-            label = getattr(component, 'label', component.name)
-            name = getattr(component, 'name', '')
+            label = getattr(component, 'label', '')
+            name = getattr(component, 'name', label.lower().replace(' ', '_'))
             placeholder = getattr(component, 'placeholder', '')
             body_elements.append(f'''
 <div class="input-group">

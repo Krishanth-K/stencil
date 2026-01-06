@@ -1,5 +1,4 @@
 import re
-import sys
 
 from stencil.abstract_classes.Button import Button
 from stencil.abstract_classes.Input import Input

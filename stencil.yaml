@@ -1,4 +1,4 @@
- # Stencil Configuration File
+# Stencil Configuration File
 # --------------------------
 # This file is used to define the UI elements for your application.
 # You can generate different outputs (like HTML or a desktop app) from the same config.
@@ -6,12 +6,11 @@
 # Optional configuration for the project
 config:
   # The backend determines the output format.
-  # Supported backends: "html", "imgui", "curses", "react", "flutter", "tkinter"
+  # Supported backends: "html", "imgui", "curses", "react"
   # Default is "html".
-  backend: "flutter"
+  backend: "curses"
   version: "1.0.0"
   author: "Your Name"
-  output_dir: "my_flutter_app"
 
 # The 'app' section defines the sequence of UI elements to be rendered.
 app:
@@ -24,27 +23,25 @@ app:
       This is a simple example of a UI defined in YAML.
 
   # 'button': A clickable button.
-  # 'text' is the text on the button.
+  # 'label' is the text on the button.
   # 'callback' is the function name that will be called when clicked.
   # Stencil generates a placeholder for this function.
   - button:
-      text: "Click Me!"
+      label: "Click Me!"
       callback: "onButtonClick"
 
   # 'separator': A horizontal line to divide sections.
   - separator
 
   # 'input': A text input field.
-  # 'name' is used to identify the input.
   # 'label' is the text displayed next to the input.
   # 'placeholder' is the text that appears when the input is empty.
   - input:
-      name: "user_name"
       label: "Your Name"
       placeholder: "Enter your name..."
 
   - button:
-      text: "Submit"
+      label: "Submit"
       callback: "doSomething"
 
   - text: "© 2025 Your Company"

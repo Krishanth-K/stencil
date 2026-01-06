@@ -26,3 +26,6 @@ stencil = "stencil.cli:main"
 requires = ["setuptools>=65.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+include = ["stencil*"]
+exclude = ["my_html_app*", "my_flutter_app*"]

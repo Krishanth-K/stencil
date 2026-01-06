@@ -19,13 +19,18 @@ class FlutterBackend:
         self._generate_main_dart()
 
         print("\nGeneration complete!")
-        print(f"To run your new Flutter app:")
+        print("To run your new Flutter app:")
         print(f"  cd {self.output_dir}")
-        print(f"  flutter run")
+        print("  flutter run")
 
     def _run_command(self, command, cwd):
         """Runs a shell command in a specified directory."""
-        subprocess.run(command, check=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(f"Running command: {command} in {cwd}")
+        try:
+            subprocess.run(command, cwd=cwd, check=True, shell=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Command failed with exit code {e.returncode}")
+            raise
 
     def _create_flutter_project(self):
         """Creates a new Flutter project."""
@@ -58,7 +63,7 @@ class FlutterBackend:
             elif comp_type == "Button":
                 widgets.append(f'ElevatedButton(onPressed: () {{}}, child: Text(r"{dart_text}")),')
             elif comp_type == "Input":
-                label = getattr(component, 'label', component.name)
+                label = getattr(component, 'label', '')
                 dart_label = label.replace("'", r"\'")
                 widgets.append(f"""
 TextField(

@@ -12,16 +12,18 @@ def run(tree, config_data, args):
         # Simplified logic for each backend
         output_dir_defaults = {
             "html": "output/html_app",
-            "react": "output/react_app",
             "flutter": "output/flutter_app",
-            "tkinter": "output/tkinter_app",
+            "react": "my_react_app/src", # Default output for React
         }
         output_dir = config_data.get("config", {}).get("output_dir", output_dir_defaults.get(backend_name, "."))
 
         if backend_name == "html":
             # The html backend is a function
             backend_module.generate_html(tree, output_dir)
-        elif backend_name in ["react", "flutter", "tkinter"]:
+        elif backend_name == "react":
+            # The react backend is a function
+            backend_module.generate_react(tree, output_dir)
+        elif backend_name in ["flutter"]:
             # These backends follow a class-based approach
             BackendClass = getattr(backend_module, f"{backend_name.capitalize()}Backend")
             app = BackendClass(tree, output_dir=output_dir)
