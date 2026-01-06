@@ -1,75 +1,42 @@
-from stencil.abstract_classes.Button import Button
-from stencil.abstract_classes.Input import Input
-from stencil.abstract_classes.Separator import Separator
-from stencil.abstract_classes.Textbox import Textbox
-from stencil.abstract_classes.Title import Title
-from stencil.curses_backend import generate_curses
-from stencil.html_backend import generate_html
-from stencil.imgui_backend import generate_imgui
-
+import importlib
 
 def run(tree, config_data, args):
     # Determine backend with correct priority: CLI > config > default
-    if args.backend:
-        backend = args.backend
-    else:
-        backend = config_data.get("config", {}).get("backend", "html")
+    backend_name = args.backend or config_data.get("config", {}).get("backend", "html")
 
-    if backend == "html":
-        print("Using html backend")
-        html_code = generate_html(tree)
-        with open("index.html", "w") as f:
-            f.write(html_code)
-        print("HTML generated at index.html")
+    try:
+        # Dynamically import the backend module
+        backend_module = importlib.import_module(f"stencil.{backend_name}_backend")
+        print(f"Using {backend_name} backend")
 
-    elif backend == "imgui":
-        print("Using imgui backend")
-        imgui_code = generate_imgui(tree)
-        with open("ui.py", "w") as f:
-            f.write(imgui_code)
-        print("ImGui code generated at ui.py")
+        # Simplified logic for each backend
+        output_dir_defaults = {
+            "html": "output/html_app",
+            "react": "output/react_app",
+            "flutter": "output/flutter_app",
+            "tkinter": "output/tkinter_app",
+        }
+        output_dir = config_data.get("config", {}).get("output_dir", output_dir_defaults.get(backend_name, "."))
 
-    elif backend == "curses":
-        print("Using curses backend")
-        curses_code = generate_curses(tree)
-        with open("tui.py", "w") as f:
-            f.write(curses_code)
-        print("Curses code generated at tui.py")
+        if backend_name == "html":
+            # The html backend is a function
+            backend_module.generate_html(tree, output_dir)
+        elif backend_name in ["react", "flutter", "tkinter"]:
+            # These backends follow a class-based approach
+            BackendClass = getattr(backend_module, f"{backend_name.capitalize()}Backend")
+            app = BackendClass(tree, output_dir=output_dir)
+            app.generate()
+        elif backend_name in ["imgui", "curses"]:
+            # Legacy backends are functions
+            generate_func = getattr(backend_module, f"generate_{backend_name}")
+            code = generate_func(tree)
+            filename = "ui.py" if backend_name == "imgui" else "tui.py"
+            with open(filename, "w") as f:
+                f.write(code)
+            print(f"{backend_name.capitalize()} code generated at {filename}")
 
-
-def generate_tree(config_data):
-    tree = []
-    if not isinstance(config_data, dict) or "app" not in config_data:
-        raise ValueError("Invalid config: 'app' key not found.")
-
-    for element in config_data["app"]:
-        # Handle simple string elements like '- separator'
-        if isinstance(element, str):
-            if element == "separator":
-                tree.append(Separator())
-                continue
-            else:
-                raise ValueError(f"Invalid string element: '{element}'")
-
-        if not isinstance(element, dict):
-            raise ValueError(f"Invalid UI element format: {element}")
-
-        element_type, value = next(iter(element.items()))
-
-        if element_type == "title":
-            tree.append(Title(value))
-        elif element_type == "text":
-            tree.append(Textbox(value))
-        elif element_type == "button":
-            if not isinstance(value, dict) or "label" not in value or "callback" not in value:
-                raise ValueError(f"Invalid button format: {value}")
-            tree.append(Button(label=value["label"], callback=value["callback"]))
-        elif element_type == "input":
-            if not isinstance(value, dict) or "label" not in value:
-                raise ValueError(f"Invalid input format: {value}")
-            tree.append(Input(label=value["label"], placeholder=value.get("placeholder", "")))
-        elif element_type == "separator":
-            tree.append(Separator())
-        else:
-            print(f"Warning: Unknown element type '{element_type}'")
-    return tree
+    except ImportError:
+        print(f"Error: Could not find or import the '{backend_name}' backend.")
+        print("Please ensure the backend name is correct and all its dependencies are installed.")
+    except Exception as e:
+        print(f"An error occurred while running the {backend_name} backend: {e}")

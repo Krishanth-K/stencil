@@ -8,12 +8,17 @@ import yaml
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from stencil.main import generate_tree, run
+from stencil.main import run
+from stencil.abstract_classes.Button import Button
+from stencil.abstract_classes.Input import Input
+from stencil.abstract_classes.Separator import Separator
+from stencil.abstract_classes.Textbox import Textbox
+from stencil.abstract_classes.Title import Title
 
 CONFIG_FILES = ["stencil.yaml", "stencil.json"]
 DEFAULT_YAML_PATH = Path.cwd() / "stencil.yaml"
 
-SUPPORTED_BACKENDS = ["html", "imgui", "curses"]
+SUPPORTED_BACKENDS = ["html", "imgui", "curses", "react", "flutter", "tkinter"]
 
 
 DEFAULT_YAML_CONTENT = """ # Stencil Configuration File
@@ -83,6 +88,44 @@ def handle_init():
         f.write(DEFAULT_YAML_CONTENT)
     print(f"Successfully created a default '{DEFAULT_YAML_PATH.name}'.")
     return 0
+
+
+def generate_tree(config_data):
+    tree = []
+    if not isinstance(config_data, dict) or "app" not in config_data:
+        raise ValueError("Invalid config: 'app' key not found.")
+
+    for element in config_data["app"]:
+        # Handle simple string elements like '- separator'
+        if isinstance(element, str):
+            if element == "separator":
+                tree.append(Separator())
+                continue
+            else:
+                raise ValueError(f"Invalid string element: '{element}'")
+
+        if not isinstance(element, dict):
+            raise ValueError(f"Invalid UI element format: {element}")
+
+        element_type, value = next(iter(element.items()))
+
+        if element_type == "title":
+            tree.append(Title(value))
+        elif element_type == "text":
+            tree.append(Textbox(value))
+        elif element_type == "button":
+            if not isinstance(value, dict) or "text" not in value:
+                raise ValueError(f"Invalid button format: {value}")
+            tree.append(Button(**value))
+        elif element_type == "input":
+            if not isinstance(value, dict) or "name" not in value:
+                raise ValueError(f"Invalid input format: {value}")
+            tree.append(Input(**value))
+        elif element_type == "separator":
+            tree.append(Separator())
+        else:
+            print(f"Warning: Unknown element type '{element_type}'")
+    return tree
 
 
 def do_generate(args):

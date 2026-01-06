@@ -6,11 +6,12 @@
 # Optional configuration for the project
 config:
   # The backend determines the output format.
-  # Supported backends: "html", "imgui"
+  # Supported backends: "html", "imgui", "curses", "react", "flutter", "tkinter"
   # Default is "html".
-  backend: "html"
+  backend: "flutter"
   version: "1.0.0"
   author: "Your Name"
+  output_dir: "my_flutter_app"
 
 # The 'app' section defines the sequence of UI elements to be rendered.
 app:
@@ -23,25 +24,27 @@ app:
       This is a simple example of a UI defined in YAML.
 
   # 'button': A clickable button.
-  # 'label' is the text on the button.
+  # 'text' is the text on the button.
   # 'callback' is the function name that will be called when clicked.
   # Stencil generates a placeholder for this function.
   - button:
-      label: "Click Me!"
+      text: "Click Me!"
       callback: "onButtonClick"
 
   # 'separator': A horizontal line to divide sections.
   - separator
 
   # 'input': A text input field.
+  # 'name' is used to identify the input.
   # 'label' is the text displayed next to the input.
   # 'placeholder' is the text that appears when the input is empty.
   - input:
+      name: "user_name"
       label: "Your Name"
       placeholder: "Enter your name..."
 
   - button:
-      label: "Submit"
+      text: "Submit"
       callback: "doSomething"
 
   - text: "© 2025 Your Company"
