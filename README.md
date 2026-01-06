@@ -42,29 +42,29 @@ This will give you a well-commented starting point for your UI configuration.
 
 ### 2. Generate Your UI
 
-Use the `generate` command to create your UI from the `stencil.yaml` file.
+Use the `stencil` command to create your UI from the `stencil.yaml` file.
 
 ```bash
-stencil generate
+stencil
 ```
 
 By default, `stencil` generates an HTML file. You can specify a different backend using the `--backend` or `-b` flag:
 
 ```bash
-# Generate an HTML file (index.html)
-stencil generate -b html
+# Generate an HTML file
+stencil -b html
 
 # Generate a React application
-stencil generate -b react
+stencil -b react
 
 # Generate a Flutter application
-stencil generate -b flutter
+stencil -b flutter
 
-# Generate an ImGui desktop application (ui.py)
-stencil generate -b imgui
+# Generate an ImGui desktop application
+stencil -b imgui
 
-# Generate a Curses terminal application (ui.py)
-stencil generate -b curses
+# Generate a Curses terminal application
+stencil -b curses
 ```
 
 ### 3. Watch for Changes
@@ -72,7 +72,7 @@ stencil generate -b curses
 For rapid development, you can use the `--watch` flag to automatically regenerate the UI whenever you save changes to your `stencil.yaml`:
 
 ```bash
-stencil generate --watch
+stencil --watch
 ```
 
 This is especially useful with a live-reload server for web development.

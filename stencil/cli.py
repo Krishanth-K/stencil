@@ -186,33 +186,19 @@ class ConfigChangeHandler(FileSystemEventHandler):
 def main():
     parser = argparse.ArgumentParser(description="A tool to generate UI from a simple config file.", prog="stencil")
     parser.add_argument("-v", "--version", action="version", version="%(prog)s 0.2.6")
+    
+    # Add backend and watch arguments directly to the main parser
+    parser.add_argument("-b", "--backend", type=str, default=None, help="The backend to use (html, imgui, etc.), overrides config file")
+    parser.add_argument("-w", "--watch", action="store_true", help="Watch config and regenerate automatically")
+
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
-
     subparsers.add_parser("init", help="Create a default stencil.yaml file.")
-    gen_parser = subparsers.add_parser("generate", help="Generate UI from config file (default action).")
-    gen_parser.add_argument("-w", "--watch", action="store_true", help="Watch config and regenerate automatically")
-    gen_parser.add_argument(
-        "-b", "--backend", type=str, default=None, help="The backend to use (html, imgui), overrides config file"
-    )
 
-    args, unknown = parser.parse_known_args()
-
-    if args.command is None:
-        if unknown:
-            # If there are unknown args and no command, maybe the user tried 'stencil --watch'
-            if "--watch" in unknown or "-w" in unknown:
-                # Re-parse as if 'generate' was passed
-                args = parser.parse_args(["generate"] + sys.argv[1:])
-            else:
-                parser.print_help()
-                return 1
-        else:
-            # Default to generate
-            args = parser.parse_args(["generate"])
+    args = parser.parse_args()
 
     if args.command == "init":
         return handle_init()
-    elif args.command == "generate":
+    else: # Default to generate
         result = do_generate(args)
         if result != 0:
             return result
@@ -236,10 +222,6 @@ def main():
             observer.join()
 
         return 0
-    else:
-        parser.print_help()
-        return 1
-
 
 if __name__ == "__main__":
     sys.exit(main())
