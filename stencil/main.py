@@ -1,4 +1,5 @@
 import importlib
+import traceback
 
 def run(tree, config_data, args):
     # Determine backend with correct priority: CLI > config > default
@@ -42,3 +43,5 @@ def run(tree, config_data, args):
         print("Please ensure the backend name is correct and all its dependencies are installed.")
     except Exception as e:
         print(f"An error occurred while running the {backend_name} backend: {e}")
+        traceback_str = traceback.format_exc()
+        print(traceback_str)

@@ -1,5 +1,5 @@
 
-.stencil-container {{{{ 
+.stencil-container {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #f0f2f5;
     color: #1c1e21;
@@ -9,23 +9,21 @@
     max-width: 400px;
     margin: 2rem auto;
     box-sizing: border-box;
-}}}} 
+}
 
-.stencil-title {{{{ 
+.stencil-title {
     font-size: 2rem;
     color: #1877f2;
     margin-bottom: 1.5rem;
-    text-align: center;
-}}}} 
+}
 
-.stencil-text {{{{ 
+.stencil-text {
     font-size: 1rem;
     line-height: 1.5;
     margin-bottom: 1rem;
-    text-align: center;
-}}}} 
+}
 
-.stencil-button {{{{ 
+.stencil-button {
     width: 100%;
     padding: 0.8rem;
     border: none;
@@ -36,42 +34,42 @@
     font-weight: 600;
     cursor: pointer;
     margin-top: 1rem;
-}}}} 
+}
 
-.stencil-button:hover {{{{ 
+.stencil-button:hover {
     background-color: #166fe5;
-}}}} 
+}
 
-.stencil-separator {{{{ 
+.stencil-separator {
     border: 0;
     height: 1px;
     background-color: #dadde1;
     margin: 1.5rem 0;
-}}}} 
+}
 
-.stencil-input-group {{{{ 
+.stencil-input-group {
     margin-bottom: 1rem;
-}}}} 
+}
 
-.stencil-label {{{{ 
+.stencil-label {
     display: block;
     margin-bottom: 0.5rem;
     color: #606770;
     font-size: 0.9rem;
     font-weight: 600;
-}}}} 
+}
 
-.stencil-input {{{{ 
+.stencil-input {
     width: 100%;
     padding: 0.8rem;
     border: 1px solid #ccd0d5;
     border-radius: 6px;
     font-size: 1rem;
     box-sizing: border-box;
-}}}} 
+}
 
-.stencil-input:focus {{{{ 
+.stencil-input:focus {
     outline: none;
     border-color: #1877f2;
     box-shadow: 0 0 0 2px #e7f3ff;
-}}}} 
+}

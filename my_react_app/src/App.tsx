@@ -10,13 +10,13 @@ import Title from './components/Title';
 function App() {
   return (
     <div className="App stencil-container">
-      <Title text={'My Awesome App'} />
-      <Textbox text={'Welcome to Stencil!\nThis is a simple example of a UI defined in YAML.\n'} />
-      <Button label={'Click Me!'} />
+      <Title text='My Awesome App' />
+      <Textbox text='Welcome to Stencil!\nThis is a simple example of a UI defined in YAML.\n' />
+      <Button label='Click Me!' onClick={ () => console.log('onButtonClick clicked') } />
       <Separator />
-      <Input label={'Your Name'} placeholder={'Enter your name...'} />
-      <Button label={'Submit'} />
-      <Textbox text={'© 2025 Your Company'} />
+      <Input label='Your Name' placeholder='Enter your name...' />
+      <Button label='Submit' onClick={ () => console.log('doSomething clicked') } />
+      <Textbox text='© 2025 Your Company' />
     </div>
   );
 }
