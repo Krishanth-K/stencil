@@ -10,7 +10,7 @@
 
 ## ✨ Features
 
-*   **Multi-Backend Support**: Generate UIs for HTML, ImGui (desktop), and Curses (terminal).
+*   **Multi-Backend Support**: Generate UIs for HTML, React (web), Flutter (mobile), ImGui (desktop), and Curses (terminal).
 *   **Simple Configuration**: Define your UI with a straightforward YAML or JSON file.
 *   **Extensible**: Designed to be easily adaptable to new UI toolkits and frameworks.
 *   **Hot-Reload**: Automatically regenerate your UI when the configuration file changes.
@@ -54,6 +54,12 @@ By default, `stencil` generates an HTML file. You can specify a different backen
 # Generate an HTML file (index.html)
 stencil generate -b html
 
+# Generate a React application
+stencil generate -b react
+
+# Generate a Flutter application
+stencil generate -b flutter
+
 # Generate an ImGui desktop application (ui.py)
 stencil generate -b imgui
 
@@ -93,13 +99,13 @@ app:
 
 ### Supported Elements
 
-| Element     | YAML Example                                  | HTML Output         | ImGui Output          | Curses Output         |
-|-------------|-----------------------------------------------|---------------------|-----------------------|-----------------------|
-| `title`     | `- title: "My App"`                           | `<h1>` & `<title>`  | Window Title          | Centered bold text    |
-| `text`      | `- text: "Hello!"`                            | `<p>`               | `imgui.text`          | Centered text         |
-| `button`    | `- button: {label: "Click", callback: "on_click"}`  | `<button>`          | `imgui.button`        | `[ Click ]`           |
-| `separator` | `- separator`                                 | `<hr>`              | `imgui.separator`     | `──────────`          |
-| `input`     | `- input: {label: "Name", placeholder: "Your name"}`   | `<input type="text">` | `imgui.input_text`    | `Name: [       ]`     |
+| Element     | YAML Example                                  | HTML Output         | React Output        | Flutter Output      | ImGui Output          | Curses Output         |
+|-------------|-----------------------------------------------|---------------------|---------------------|---------------------|-----------------------|-----------------------|
+| `title`     | `- title: "My App"`                           | `<h1>` & `<title>`  | `<h1>`              | `Text` (headline)   | Window Title          | Centered bold text    |
+| `text`      | `- text: "Hello!"`                            | `<p>`               | `<p>`               | `Text`              | `imgui.text`          | Centered text         |
+| `button`    | `- button: {label: "Click", callback: "on_click"}`  | `<button>`          | `<button>`          | `ElevatedButton`    | `imgui.button`        | `[ Click ]`           |
+| `separator` | `- separator`                                 | `<hr>`              | `<hr>`              | `Divider`           | `imgui.separator`     | `──────────`          |
+| `input`     | `- input: {label: "Name", placeholder: "Your name"}`   | `<input type="text">` | `<input type="text">` | `TextField`         | `imgui.input_text`    | `Name: [       ]`     |
 
 ---
 
@@ -108,6 +114,8 @@ app:
 Based on the configuration example above, here's what `stencil` will generate for each backend:
 
 *   **HTML (`-b html`)**: Creates an `index.html` file with basic styling and a `main.js` file with JavaScript stubs for your callbacks.
+*   **React (`-b react`)**: Generates a set of React components and an `App.tsx` file in `my_react_app/src`. Run `npm run dev` in `my_react_app` to start the development server.
+*   **Flutter (`-b flutter`)**: Generates a `main.dart` file in `output/flutter_app/lib`. Run `flutter run` in `output/flutter_app` to launch the mobile app.
 *   **ImGui (`-b imgui`)**: Creates a `ui.py` file. Run `python ui.py` to launch a native desktop window with your UI elements. Callbacks are generated as placeholder Python functions.
 *   **Curses (`-b curses`)**: Creates a `ui.py` file. Run `python ui.py` in your terminal to launch a text-based UI. Use Tab to navigate and Enter to press buttons.
 

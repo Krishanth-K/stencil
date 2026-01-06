@@ -39,7 +39,6 @@ class MyHomePage extends StatelessWidget {
             children: <Widget>[
               Text(r"My Awesome App", style: Theme.of(context).textTheme.headlineMedium),
               Text(r"Welcome to Stencil!\nThis is a simple example of a UI defined in YAML.\n"),
-              Text(r"Welcome to Stencil!\nThis is a simple example of a UI defined in YAML.\n"),
               ElevatedButton(onPressed: () {}, child: Text(r"Click Me!")),
               const Divider(),
               

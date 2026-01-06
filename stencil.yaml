@@ -1,4 +1,4 @@
- # Stencil Configuration File
+# Stencil Configuration File
 # --------------------------
 # This file is used to define the UI elements for your application.
 # You can generate different outputs (like HTML or a desktop app) from the same config.
@@ -6,7 +6,7 @@
 # Optional configuration for the project
 config:
   # The backend determines the output format.
-  # Supported backends: "html", "imgui"
+  # Supported backends: "html", "imgui", "curses", "react"
   # Default is "html".
   backend: "react"
   version: "1.0.0"
