@@ -1,0 +1,70 @@
+import sys
+import glfw
+import OpenGL.GL as gl
+from imgui.integrations.glfw import GlfwRenderer
+
+try:
+    import imgui
+except ImportError:
+    raise RuntimeError("""
+ImGui backend requested, but dependencies are not installed.
+Run: pip install stencil-ui[imgui]
+""")
+
+# --- Input Buffers ---
+{% for field in input_fields %}
+input_buffer_{{ field.label.lower().replace(' ', '_') }} = "{{ field.placeholder }}"
+{% endfor %}
+
+# --- Callbacks ---
+{% for callback in callbacks %}
+def {{ callback }}():
+    print("{{ callback }} called")
+{% endfor %}
+
+def main():
+    {% for field in input_fields %}
+    global input_buffer_{{ field.label.lower().replace(' ', '_') }}
+    {% endfor %}
+
+    if not glfw.init():
+        print("Could not initialize GLFW")
+        sys.exit(1)
+
+    window = glfw.create_window(1280, 720, "{{ title }}", None, None)
+    if not window:
+        print("Failed to create GLFW window")
+        glfw.terminate()
+        sys.exit(1)
+
+    glfw.make_context_current(window)
+    imgui.create_context()
+    renderer = GlfwRenderer(window)
+
+    while not glfw.window_should_close(window):
+        glfw.poll_events()
+        renderer.process_inputs()
+        imgui.new_frame()
+
+        imgui.begin("{{ title }}")
+        
+        {% for element in body_elements %}
+        {{ element | indent(8) }}
+        {% endfor %}
+        
+        imgui.end()
+
+        gl.glClearColor(0.1, 0.1, 0.1, 1)
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+
+        imgui.render()
+        renderer.render(imgui.get_draw_data())
+
+        glfw.swap_buffers(window)
+
+    renderer.shutdown()
+    glfw.terminate()
+
+
+if __name__ == "__main__":
+    main()

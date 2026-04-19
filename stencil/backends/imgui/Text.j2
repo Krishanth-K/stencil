@@ -1,0 +1,5 @@
+{% if variant == "title" %}
+imgui.text_ansi("{{ content }}")
+{% else %}
+imgui.text("""{{ content }}""")
+{% endif %}

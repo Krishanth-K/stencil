@@ -1,0 +1,11 @@
+name: ImGui
+version: 1.0.0
+author: Stencil Team
+supported_elements:
+  - title
+  - text
+  - button
+  - input
+  - separator
+output_filename: ui.py
+default_output_dir: output/imgui
