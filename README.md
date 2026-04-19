@@ -10,7 +10,7 @@ Write YAML → get a working UI in seconds. Terminal, desktop, or browser. No fr
 
 ---
 
-## Why?
+## Why Stencil?
 
 You need a UI to test backend logic or wrap a script — not a production app, just something functional. Skip the boilerplate. Describe your UI once, generate it instantly.
 
