@@ -3,7 +3,7 @@
 all: build install
 
 edit:
-	python install -e .
+	pip install -e .
 
 build:
 	python -m build

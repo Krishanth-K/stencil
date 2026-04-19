@@ -1,10 +1,11 @@
 from .Component import Component
 
+
 class Button(Component):
-    def __init__(self, text, **kwargs):
-        self.text = text
-        self.kwargs = kwargs
-        # For backward compatibility with other backends
-        self.label = text
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+    def __init__(self, label=None, callback=None, disabled=False, style=None):
+        super().__init__()
+
+        self.label = label if label is not None else "Label"
+        self.callback = callback
+        self.disabled = disabled
+        self.style = style

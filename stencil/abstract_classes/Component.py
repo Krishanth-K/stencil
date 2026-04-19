@@ -1,3 +1,5 @@
 class Component:
     """A base class for all UI components."""
-    pass
+
+    def __init__(self, is_interactive=False):
+        self.is_interactive = is_interactive
