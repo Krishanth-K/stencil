@@ -2,6 +2,7 @@ from .Component import Component
 
 
 class Button(Component):
+    is_interactive = True
     def __init__(self, label=None, callback=None, disabled=False, style=None):
         super().__init__()
 

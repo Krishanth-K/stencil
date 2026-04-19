@@ -1,0 +1,5 @@
+name: "html"
+default_output_dir: "output/html"
+output_filename: "index.html"
+copy_files:
+  - style.css

@@ -15,6 +15,8 @@ from stencil.abstract_classes.Separator import Separator
 from stencil.abstract_classes.Text import Text
 from stencil.main import run
 
+from .engine import render_app
+
 CONFIG_FILES = ["stencil.yaml", "stencil.json"]
 DEFAULT_YAML_PATH = Path.cwd() / "stencil.yaml"
 
@@ -184,7 +186,8 @@ def build(args: argparse.Namespace) -> int:
         if backend is None:
             return 1
 
-        run(tree, config_data, backend)
+        # run(tree, config_data, backend)
+        render_app(tree, backend, config_data=config_data)
 
     except (ValueError, TypeError) as e:
         print(f"Error processing '{config_path.name}': {e}", file=sys.stderr)
@@ -262,8 +265,8 @@ def main() -> int:
         case "init":
             return handle_init()
         case _:
-            # return _run_generate(args)
-            test()
+            return _run_generate(args)
+            # test()
             return 0
 
 

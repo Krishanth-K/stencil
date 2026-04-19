@@ -1,5 +1,6 @@
 class Component:
     """A base class for all UI components."""
-
-    def __init__(self, is_interactive=False):
-        self.is_interactive = is_interactive
+    
+    # Metadata for the engine to collect ingredients generically
+    is_interactive = False
+    callback = None
