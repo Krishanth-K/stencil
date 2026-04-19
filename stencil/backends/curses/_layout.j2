@@ -1,0 +1,127 @@
+import curses
+import sys
+
+# --- Callbacks ---
+{% for callback in callbacks %}
+def {{ callback }}():
+    # Placeholder for {{ callback }}
+    pass
+{% endfor %}
+
+# --- UI Definition ---
+widgets = [
+    {% for element in body_elements %}
+    {{ element }}
+    {% endfor %}
+]
+
+# Indices of widgets that can receive focus
+interactive_widgets = {{ interactive_widgets }}
+
+def main(stdscr):
+    if not sys.stdout.isatty():
+        print("This application must be run in a terminal.")
+        sys.exit(1)
+
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN) # Highlight
+    curses.curs_set(0)
+
+    focused_widget_idx = 0
+    
+    while True:
+        stdscr.clear()
+        h, w = stdscr.getmaxyx()
+
+        # Calculate starting Y to center the UI vertically
+        y_pos = h // 2 - len(widgets) // 2
+
+        for i, widget in enumerate(widgets):
+            x_pos = w // 2
+            
+            # Check if this widget is currently focused
+            is_focused = False
+            if i in interactive_widgets:
+                is_focused = (interactive_widgets.index(i) == focused_widget_idx)
+            
+            w_type = widget.get('type')
+            
+            if w_type == 'text':
+                variant = widget.get('variant', 'body')
+                content = widget.get('content', '')
+                
+                if variant == 'title':
+                    attr = curses.A_BOLD | curses.color_pair(1)
+                    stdscr.addstr(y_pos, max(0, x_pos - len(content) // 2), content, attr)
+                    y_pos += 2
+                elif variant == 'subtitle':
+                    attr = curses.A_BOLD
+                    stdscr.addstr(y_pos, max(0, x_pos - len(content) // 2), content, attr)
+                    y_pos += 1
+                else: # body
+                    for line in content.splitlines():
+                        stdscr.addstr(y_pos, max(0, x_pos - len(line) // 2), line)
+                        y_pos += 1
+                    y_pos += 1
+
+            elif w_type == 'separator':
+                stdscr.addstr(y_pos, max(0, x_pos - 10), "-" * 20)
+                y_pos += 1
+
+            elif w_type == 'button':
+                label = "[ " + widget['label'] + " ]"
+                attr = curses.color_pair(2) if is_focused else curses.A_NORMAL
+                stdscr.addstr(y_pos, max(0, x_pos - len(label) // 2), label, attr)
+                y_pos += 1
+
+            elif w_type == 'input':
+                label = widget['label'] + ": "
+                buffer = widget.get('buffer', '')
+                line = label + buffer
+                
+                attr = curses.color_pair(2) if is_focused else curses.A_NORMAL
+                stdscr.addstr(y_pos, max(0, x_pos - len(line) // 2), label)
+                stdscr.addstr(y_pos, max(0, x_pos - len(line) // 2 + len(label)), buffer, attr)
+                y_pos += 1
+
+        stdscr.refresh()
+
+        key = stdscr.getch()
+
+        if key == ord('q'):
+            break
+        elif key == 9: # Tab
+            if interactive_widgets:
+                focused_widget_idx = (focused_widget_idx + 1) % len(interactive_widgets)
+        elif key == curses.KEY_BTAB:
+            if interactive_widgets:
+                focused_widget_idx = (focused_widget_idx - 1 + len(interactive_widgets)) % len(interactive_widgets)
+        elif key == 10 or key == 13: # Enter
+            if interactive_widgets:
+                widget_index = interactive_widgets[focused_widget_idx]
+                widget = widgets[widget_index]
+                if widget.get('type') == 'button':
+                    cb_name = widget.get('callback')
+                    if cb_name in globals():
+                        globals()[cb_name]()
+                    
+                    stdscr.addstr(h - 1, 0, f"Executed: {cb_name}")
+                    stdscr.refresh()
+                    curses.napms(500)
+        else: # Handle text input for focused Input widget
+            if interactive_widgets:
+                widget_index = interactive_widgets[focused_widget_idx]
+                widget = widgets[widget_index]
+                if widget.get('type') == 'input':
+                    curses.curs_set(1)
+                    if key == curses.KEY_BACKSPACE or key == 127:
+                        widget['buffer'] = widget['buffer'][:-1]
+                    elif 32 <= key <= 126:
+                        widget['buffer'] += chr(key)
+                else:
+                    curses.curs_set(0)
+
+
+if __name__ == "__main__":
+    curses.wrapper(main)
