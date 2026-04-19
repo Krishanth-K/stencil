@@ -8,7 +8,7 @@ from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 BACKENDS_DIR = Path(__file__).parent / "backends"
 
 
-def render_app(tree: list, backend_name: str, config_data: dict = None) -> None:
+def render_app(tree: list, backend_name: str, output_dir: str = None, config_data: dict = None) -> None:
     """
     The unified engine. Renders a tree of components using Jinja2 templates
     from the specified backend folder and writes the output to disk.
