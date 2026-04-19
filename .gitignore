@@ -15,6 +15,7 @@ dist/
 index.html
 ui.py
 tui.py
+**/output/**
 
 # cache
 imgui.ini
@@ -25,5 +26,6 @@ stencil.pdf
 stencil_poster.pdf
 tasks.md
 Makefile
+makefile
 *diagram*.*
 
