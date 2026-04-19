@@ -85,7 +85,7 @@ def render_app(tree: list, backend_name: str, output_dir: str = None, config_dat
 
     # 7. Copy extra files
     for filename in manifest.get("copy_files", []):
-        src = Path(__file__).parent / filename
+        src = backend_path / filename
         if src.exists():
             shutil.copy(src, Path(output_dir) / filename)
 
