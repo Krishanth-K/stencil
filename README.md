@@ -8,6 +8,8 @@
 
 Write YAML → get a working UI in seconds. Terminal, desktop, or browser. No frontend knowledge required.
 
+![Stencil Example](assets/ex1.png)
+
 ---
 
 ## Why Stencil?
